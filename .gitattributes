@@ -1,0 +1,45 @@
+# 统一换行：仓库内存 LF，检出时按平台转换
+* text=auto
+
+# 文本文件统一按文本处理
+*.md      text
+*.txt     text
+*.c        text
+*.h        text
+*.cpp      text
+*.py       text
+*.json     text
+*.yml      text
+*.css      text
+*.ts       text
+*.tsx      text
+*.js       text
+*.html     text
+
+# 二进制文件：禁止换行转换与文本 diff
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.gif     binary
+*.bmp     binary
+*.pdf     binary
+*.doc     binary
+*.docx    binary
+*.xls     binary
+*.xlsx    binary
+*.ppt     binary
+*.pptx    binary
+*.zip     binary
+*.rar     binary
+*.hex     binary
+*.bin     binary
+*.elf     binary
+*.o       binary
+
+# Word 文档不支持文本 diff，避免误报
+*.docx    diff=astextplain
+*.doc     diff=astextplain
+
+# 图形文件不在 GitHub 上渲染 diff
+*.png     -diff
+*.jpg     -diff

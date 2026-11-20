@@ -1,0 +1,69 @@
+# ===== 操作系统 =====
+.DS_Store
+._*
+.AppleDouble
+.LSOverride
+Thumbs.db
+desktop.ini
+
+# ===== 编辑器 / IDE =====
+.vscode/
+.idea/
+*.swp
+*~
+*.bak
+*.orig
+
+# ===== Office 临时文件 =====
+~$*
+*.tmp
+*.crdownload
+
+# ===== STM32 / Keil MDK =====
+04_firmware/**/MDK-ARM/**/Objects/
+04_firmware/**/MDK-ARM/**/Listings/
+04_firmware/**/*.o
+04_firmware/**/*.d
+04_firmware/**/*.crf
+04_firmware/**/*.axf
+04_firmware/**/*.elf
+04_firmware/**/*.map
+04_firmware/**/*.lst
+04_firmware/**/*.lnp
+04_firmware/**/*.dep
+04_firmware/**/*.htm
+04_firmware/**/*.build_log.htm
+04_firmware/**/*.uvguix.*
+04_firmware/**/*.scvd
+04_firmware/**/MDK-ARM/**/*.hex
+04_firmware/**/MDK-ARM/**/*.bin
+04_firmware/**/Debug/
+04_firmware/**/Release/
+04_firmware/**/build/
+
+# 发布固件（releases/ 下的 hex/bin 要保留，勿删）
+
+# ===== STM32CubeMX 生成物中无需入库的缓存 =====
+04_firmware/**/.mxproject
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# ===== Node / 前端 =====
+node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+
+# ===== 压缩包与大型临时文件 =====
+*.zip
+*.rar
+*.7z
+*.iso
+
+# ===== 本地个人笔记（不共享） =====
+99_archive/private/
