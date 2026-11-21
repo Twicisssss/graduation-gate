@@ -257,7 +257,7 @@ def fig2(path):
         (452, 190, 888, 268, ["认证状态机", "IDLE→F1→窗口→F2→F3→GRANT / LOCKOUT"], NAVY_F, NAVY),
         (452, 284, 888, 352, ["用户与权限管理", "卡 UID / 指纹 ID / PIN 哈希 / 角色"], NAVY_F, NAVY),
         (452, 368, 888, 436, ["窗口定时器（1 ms 节拍）", "非阻塞计时，超时即复位"], NAVY_F, NAVY),
-        (452, 452, 888, 520, ["日志环形缓冲 + 断网补传"], NAVY_F, NAVY),
+        (452, 452, 888, 520, ["日志环形缓冲 + 掉电保护"], NAVY_F, NAVY),
         (452, 536, 888, 604, ["内部 Flash 存储", "用户表 / 参数 / 日志"], "#F2F6FC", NAVY),
         (452, 620, 888, 680, ["电源管理与抗冲击设计"], "#F2F6FC", NAVY),
     ]
@@ -278,13 +278,13 @@ def fig2(path):
     label(d, 1110, 532, "独立 12 V 供电 + 续流二极管", 12, "#6B7A8F", anchor="mm")
 
     # 通信 / 应用
-    box(d, 460, 760, 760, 830, ["ESP-01S（Wi-Fi 透传）", "AT 指令 / HTTP POST"], size=15)
+    box(d, 460, 760, 760, 830, ["CH340 USB 转串口", "115200 8N1 · 一行一帧"], size=15)
     arrow(d, [(830, 795), (900, 795)], color=LINE)
     box(d, 900, 750, 1260, 840,
-        ["Web 后台（React + Supabase）", "用户管理 / 通行日志 / 异常高亮 / 导出"], size=15,
+        ["本地审计后台（Python + 浏览器）", "通行日志 / 异常高亮 / KPI / CSV 导出"], size=15,
         fill=GREEN_F, border=GREEN)
-    label(d, 866, 775, "USART3", 12, "#6B7A8F", anchor="mm")
-    label(d, 866, 818, "Wi-Fi", 12, "#6B7A8F", anchor="mm")
+    label(d, 866, 775, "USART1", 12, "#6B7A8F", anchor="mm")
+    label(d, 866, 818, "USB", 12, "#6B7A8F", anchor="mm")
 
     # 连接线（输入 -> 主控）
     for y in (188, 290, 392, 494):
@@ -294,7 +294,7 @@ def fig2(path):
     for y in (188, 290, 397):
         arrow(d, [(902, y), (958, y)], color=LINE)
 
-    # 主控 -> ESP
+    # 主控 -> 串口
     arrow(d, [(670, 702), (670, 758)], color=LINE)
     # 主控 <-> Flash 已在内框体现
 
@@ -305,7 +305,7 @@ def fig2(path):
     for i, s in enumerate(["12 V / 2 A 适配器分路：",
                            "12 V → 电磁锁（经继电器）",
                            "5 V → 继电器 / 键盘 / OLED",
-                           "3.3 V → 主控 / RC522 / ESP-01S",
+                           "3.3 V → 主控 / RC522 / DS1302",
                            "单点共地，锁线圈反并 1N4007"]):
         d.text((px(78), px(690 + i * 17)), s, font=f(FONT_R, 12), fill="#5A6B80", anchor="lm")
 
@@ -314,8 +314,8 @@ def fig2(path):
                         fill="#FBFCFE", outline="#D8E0EA", width=px(1.2))
     d.text((px(78), px(822)), "软件与后台", font=f(FONT_B, 14, True), fill=INK, anchor="lm")
     for i, s in enumerate(["固件：C + HAL + 1 ms 非阻塞状态机",
-                           "后台：React + TypeScript + Supabase",
-                           "通信：HTTP + JSON（断网补传）"]):
+                           "后台：Python 标准库 + 浏览器面板",
+                           "通信：USB 串口 / CSV 行帧"]):
         d.text((px(78), px(852 + i * 17)), s, font=f(FONT_R, 12), fill="#5A6B80", anchor="lm")
 
     img.save(path, dpi=(300, 300))

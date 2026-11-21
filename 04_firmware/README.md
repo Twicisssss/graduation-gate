@@ -13,7 +13,7 @@
 │   │   ├── bsp_lock.h        电磁锁时序
 │   │   ├── bsp_flash.h       内部 Flash 模拟 EEPROM
 │   │   ├── bsp_rtc.h         DS1302
-│   │   └── bsp_esp.h         ESP-01S AT 指令
+│   │   └── bsp_uart.h        串口收发 / 日志帧 / printf 重定向
 │   └── Src/
 ├── Services/             # 业务服务：可复用、可单测
 │   ├── auth_fsm.c/.h         三因子级联状态机（核心）
@@ -46,12 +46,51 @@ CubeMX 生成的 `Core/`、`Drivers/` 后续加入，**不要手改生成文件*
 | `UNLOCK_MS` | 3000 | 开锁保持时间 |
 | `MAX_USERS` | 20 | 用户表容量 |
 
-## 编译
+## 串口日志协议（与 PC 后台的契约，先定死再写代码）
 
-Keil MDK 5 打开 `MDK-ARM/*.uvprojx`（CubeMX 生成后）。命令行编译（有 ARM GCC 时）：
+- 物理层：USART1（PA9/PA10）→ CH340 → USB，**115200 8N1**
+- 帧格式：一行一条，字段用英文逗号分隔，`\r\n` 结尾，字段内不得出现逗号
 
-```bash
-make -C 04_firmware -j
+```
+时间,用户,卡UID,阶段,结果,原因,耗时ms
 ```
 
-产物 `*.hex` / `*.bin` 放 `releases/`，命名 `gate-v1.0-20270301.hex`。
+| 字段 | 取值 | 说明 |
+| --- | --- | --- |
+| 时间 | `YYYY-MM-DDThh:mm:ss` | DS1302 提供，PC 可下发校时 |
+| 用户 | `U01`…`U20` / `-` | 未识别用户填 `-` |
+| 卡UID | 8 位十六进制 / `-` | 大写，无空格 |
+| 阶段 | `F1` `F2` `F3` `-` | 一级读卡 / 二级 PIN / 三级指纹 |
+| 结果 | `pass` `deny` `lock` | lock 表示本次触发锁定 |
+| 原因 | 见下表 / 空 | pass 时留空 |
+| 耗时 | 整数毫秒 | 从刷卡到出结果 |
+
+原因枚举：`card_unknown`、`card_disabled`、`pin_wrong`、`finger_mismatch`、`window_timeout`、`factor_mismatch`、`locked`
+
+示例：
+
+```
+2027-04-02T10:12:33,U01,A1B2C3D4,F3,pass,,2860
+2027-04-02T10:13:02,U03,C3D4E5F6,F2,deny,pin_wrong,1689
+2027-04-02T10:13:40,U02,5E6F7A8B,F1,deny,card_unknown,116
+2027-04-02T10:14:05,U02,5E6F7A8B,-,lock,locked,0
+```
+
+**约定**：只有一条记录完整产生后整行输出，不跨行拼接；串口发送用非阻塞，主循环不得等待 `.hex` 发送完成。
+
+## 开发环境
+
+- 编译：Windows + Keil MDK 5（CubeMX 生成工程后打开 `MDK-ARM/*.uvprojx`）。
+- 烧录：ST-Link V2；调试口只保留 SWD（`SWDIO` PA13 / `SWCLK` PA14）。
+- 串口：CH340 在 Windows 上系统自带驱动，设备管理器里是 `COM3`/`COM4` 之类；Mac 上若认不到，装一次 WCH 驱动即可。
+
+## 编译
+
+Keil MDK 5 打开 `MDK-ARM/*.uvprojx`（CubeMX 生成后）。产物 `*.hex` / `*.bin` 放 `releases/`，命名 `gate-v1.0-20270301.hex`。
+
+```bat
+:: Windows 下打开发布目录
+explorer 04_firmware\releases
+```
+
+> 注意：Keil 工程路径与文件名请保持 ASCII（当前目录结构已满足），中文路径会导致部分版本编译异常。

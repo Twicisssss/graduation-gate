@@ -6,10 +6,13 @@
 设计目标：不依赖公网、不依赖数据库、不依赖 Node，一条命令跑起来。
     串口/演示数据  ->  内存 + CSV  ->  http://127.0.0.1:8000 实时刷新
 
-用法：
-    python3 app.py --demo              # 演示模式（无硬件，自动生成数据）
-    python3 app.py --port /dev/tty.usbserial-1420   # 真实串口
-    python3 app.py --snapshot out.html # 导出一张静态快照（写论文/PPT 用）
+用法（Windows 开发机）：
+    py app.py --demo            # 演示模式（无硬件，自动生成数据）
+    py app.py --port COM3       # 真实串口，设备管理器里看端口号
+    py app.py --snapshot out.html   # 导出一张静态快照（写论文/PPT 用）
+
+Mac 上（仅临时验证）：
+    python3 app.py --port /dev/tty.usbserial-1420
 
 串口数据格式（一行一条，逗号分隔）：
     2027-04-02T10:12:33,U01,A1B2C3D4,F3,pass,,2860
