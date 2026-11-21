@@ -67,3 +67,7 @@ dist/
 
 # ===== 本地个人笔记（不共享） =====
 99_archive/private/
+
+# 后台运行时产物
+05_web/server/logs.csv
+05_web/server/__pycache__/
